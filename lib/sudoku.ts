@@ -1,27 +1,77 @@
 // Sodoku
-type Grid = number[][];
-type Solution = {
-  grid: Grid,
-  run: number
+export type Grid = number[][];
+export type Solution = {
+  grid: Grid;
+  run: number;
+  solved: boolean;
 }
 
-function solve(grid: Grid) {
-  const positions = getEmptyIndexes(grid);
+export function solve(grid: Grid) {
 
-  return inPlaceTest(grid, positions);
+  return inPlaceTest(grid);
 }
 
-function inPlaceTest(_grid: Grid, positions: Grid): Solution {
+export function generate(): Solution {
+  const grid = getEmptyGrid();
+  const row = getRandomRow();
+  grid[0] = row;
+
+
+  return inPlaceTest(grid);
+}
+
+export function getRandomRow(): number[] {
+  const row= getArrayWithFill(0, 9);
+  const length = 9;
+  let cur = 0;
+
+  while(cur < length) {
+    const x = getRandomNumber(9);
+    row[cur] = x;
+    if (testGroup(row)) {
+      cur++;
+    }
+  }
+
+  return row
+}
+
+function getRandomNumber(max: number, includeZero?: boolean): number {
+  const random = Math.floor(Math.random() * max);
+  return includeZero ? random : random + 1;
+}
+
+
+export function getEmptyGrid(): Grid {
+  let row = 0;
+  const grid = [];
+  while (row < 9) {
+    grid.push(getArrayWithFill(0, 9));
+    row++;
+  }
+
+  return grid;
+}
+
+function inPlaceTest(_grid: Grid, _maxRun?: number): Solution {
   // Backtracking
+  const positions = getEmptyIndexes(_grid);
   let grid = copyGrid(_grid);
   let cur = 0;
   let x = 1;
   let run = 0;
+  const MAX_RUN = _maxRun || 1_000_000;
 
-  while (cur < positions.length) {
+  while (cur < positions.length && run < MAX_RUN) {
     run++;
     const [row, col] = positions[cur];
+
     if (x > 9) {
+      /**
+        * Already tested 1 to 9.
+        * Now, moved back to previous position
+        * and increase the number
+        */
       const prev = cur - 1 >= 0 ? cur - 1 : 0;
       const [pRow, pCol] = positions[prev];
 
@@ -29,6 +79,11 @@ function inPlaceTest(_grid: Grid, positions: Grid): Solution {
       grid = copyGridWith(grid, [row, col], 0);
       cur = prev;
     } else {
+      /**
+        * Test the current x value.
+        * If valid, move on to next empty cell.
+        * If not valid, increase x value.
+        */
       const temp = copyGridWith(grid, [row, col], x);
       const isValid = testCurValue(temp, [row, col]);
 
@@ -43,11 +98,11 @@ function inPlaceTest(_grid: Grid, positions: Grid): Solution {
     }
   }
 
-  return { grid, run };
+  return { grid, run, solved: run < MAX_RUN};
 }
 
 function testCurValue(grid: Grid, cur: number[]) {
-  const [ row, col ] = cur;
+  const [row, col] = cur;
   const rowD = grid[row];
   const colD = getColD(grid, col);
   const squareD = getSquare(grid, row, col);
@@ -77,7 +132,7 @@ function copyGridWith(
   return copy;
 }
 
-function copyGrid(grid: Grid) {
+export function copyGrid(grid: Grid) {
   const copy: Grid = [];
 
   grid.forEach((row, _r) => {
@@ -146,27 +201,43 @@ function getColD(grid: Grid, col: number): number[] {
   return colD;
 }
 
-function printSudoku(grid: Grid) {
-  grid.forEach((row) => {
+function getArrayWithFill(value, length) {
+  const array = [];
+  let index = 0;
+  while(index < length) {
+    array.push(value);
+    index++;
+  }
+
+  return array;
+}
+
+export function printSudoku(grid: Grid) {
+  const hSeparator = getArrayWithFill('-', 13);
+  const printGrid: string[][] = grid.reduce((acc: string[][], row, index) => {
+    if (index === 0 || index === 3 || index === 6) {
+      // @ts-ignore
+      acc.push(hSeparator);
+    }
+    const printRow: string[] = row.reduce((rAcc: string[], value, rIndex) => {
+      if (rIndex === 0 || rIndex === 3 || rIndex === 6 ) {
+        rAcc.push('|');
+      }
+      rAcc.push(value + '');
+      if( rIndex === 8 ) {
+        rAcc.push('|');
+      }
+      return rAcc;
+    }, []);
+
+    acc.push(printRow);
+    if(index === 8) {
+      acc.push(hSeparator);
+    }
+
+    return acc;
+  }, []);
+  printGrid.forEach((row) => {
     console.log(row.join(" "));
   });
 }
-
-// RUN
-//
-const grid = [
-  [5, 3, 0, 0, 7, 0, 0, 0, 0],
-  [6, 0, 0, 1, 9, 5, 0, 0, 0],
-  [0, 9, 8, 0, 0, 0, 0, 6, 0],
-  [8, 0, 0, 0, 6, 0, 0, 0, 3],
-  [4, 0, 0, 8, 0, 3, 0, 0, 1],
-  [7, 0, 0, 0, 2, 0, 0, 0, 6],
-  [0, 6, 0, 0, 0, 0, 2, 8, 0],
-  [0, 0, 0, 4, 1, 9, 0, 0, 5],
-  [0, 0, 0, 0, 8, 0, 0, 7, 9],
-];
-printSudoku(grid);
-console.log(" ");
-const solution = solve(grid);
-console.log('run:', solution.run);
-printSudoku(solution.grid);
