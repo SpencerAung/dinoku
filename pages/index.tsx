@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { generate, Solution } from '../lib/sudoku';
 import SudokuTable from '../components/SudokuTable';
+import classNames from 'classnames';
 
 
 function Canvas() {
@@ -29,7 +30,13 @@ function Home({ sudoku }: { sudoku: Solution }) {
   return (
     <div className="flex flex-col justify-center items-center h-full min-h-screen">
       <div style={{ width: '540px' }}>
-        <SudokuTable grid={sudoku.grid} highlightSameNumber />
+        <SudokuTable grid={sudoku.grid}
+          cellClassNames={(x, [row, col], { selected, selectedIndex }) => classNames({
+            "bg-indigo-600": selectedIndex == [row, col],
+            "bg-gray-800": selected === x && selectedIndex != [row, col]
+
+          })}
+        />
       </div>
     </div>
   )
