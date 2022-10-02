@@ -1,4 +1,4 @@
-import { solve, generate, printSudoku, getEmptyGrid, getRandomRow } from './lib/sudoku.ts';
+import { solve, generate, printSudoku, getEmptyGrid, getRandomRow } from './lib/sudoku';
 
 const grid = [
   [5, 3, 0, 0, 7, 0, 0, 0, 0],
