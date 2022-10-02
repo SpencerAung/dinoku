@@ -20,6 +20,20 @@ export function generate(): Solution {
   return inPlaceTest(grid);
 }
 
+export function generateWithPattern(pattern: Grid): Grid {
+  const grid = generate().grid;
+
+  pattern.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value === 0) {
+        grid[rowIndex][colIndex] = null;
+      }
+    });
+  });
+
+  return grid;
+}
+
 export function getRandomRow(): number[] {
   const row= getArrayWithFill(0, 9);
   const length = 9;
