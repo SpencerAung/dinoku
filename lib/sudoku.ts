@@ -20,9 +20,8 @@ export function generate(): Solution {
   return inPlaceTest(grid);
 }
 
-export function generateWithPattern(pattern: Grid): Grid {
-  const grid = generate().grid;
-
+export function applyPattern(pattern: Grid, sudoku: Grid) {
+  const  grid = copyGrid(sudoku);
   pattern.forEach((row, rowIndex) => {
     row.forEach((value, colIndex) => {
       if (value === 0) {
@@ -30,8 +29,13 @@ export function generateWithPattern(pattern: Grid): Grid {
       }
     });
   });
-
   return grid;
+}
+
+export function generateWithPattern(pattern: Grid): Grid {
+  const grid = generate().grid;
+
+  return applyPattern(pattern, grid);
 }
 
 export function getRandomRow(): number[] {

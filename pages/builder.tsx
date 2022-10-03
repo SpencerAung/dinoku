@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { copyGrid, getEmptyGrid } from '../lib/sudoku';
 import SudokuTable from '../components/SudokuTable';
 import classNames from 'classnames'
-import { generateWithPattern } from '../lib/sudoku';
+import { applyPattern, generate } from '../lib/sudoku';
 
 function Builder() {
   const emptyGrid = getEmptyGrid();
@@ -44,7 +44,8 @@ function Builder() {
 function Preview({
   pattern,
 }) {
-  const grid = useMemo(() => generateWithPattern(pattern), [pattern]);
+  const puzzleRef = useRef(generate().grid);
+  const grid = useMemo(() => applyPattern(pattern, puzzleRef.current), [pattern]);
 
   if (!pattern) {
     return null;
