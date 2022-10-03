@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { copyGrid, getEmptyGrid } from '../lib/sudoku';
 import SudokuTable from '../components/SudokuTable';
 import classNames from 'classnames'
@@ -44,10 +44,11 @@ function Builder() {
 function Preview({
   pattern,
 }) {
+  const grid = useMemo(() => generateWithPattern(pattern), [pattern]);
+
   if (!pattern) {
     return null;
   }
-  const grid = generateWithPattern(pattern);
 
 
   return (
