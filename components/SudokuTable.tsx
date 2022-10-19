@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Grid } from '../lib/sudoku';
 import classNames from 'classnames';
 
 
-function SudokuTable({ grid, onCellClick, cellClassNames }:
-  { grid: Grid, onCellClick?: (x: number, index: number[]) => void, cellClassNames?: (x: number, index: number[], selected: { selected: number | null, selectedIndex: number[] }) => string }) {
+function SudokuTable({ grid, onCellClick, cellClassNames, cellRender }: {
+  grid: Grid,
+  onCellClick?: (x: number, index: number[]) => void,
+  cellClassNames?: (x: number, index: number[], selected: { selected: number | null, selectedIndex: number[] }) => string,
+  cellRender?: (x: number, index: number[]) => ReactNode
+  }) {
   const [selected, setSelected] = useState<number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number[]>([]);
 
@@ -14,24 +18,27 @@ function SudokuTable({ grid, onCellClick, cellClassNames }:
     onCellClick && typeof onCellClick === 'function' && onCellClick(x, [row, col]);
   }
 
+  const defaultCellRender = (x: any) => x !== 0 ? x : '';
+  const render = cellRender && typeof cellRender === 'function' ? cellRender : defaultCellRender;
+
   return (
     <div className="border border-slate-50 text-neutral-400">
-      {grid && grid.map((row: number[], i: number) => (
-        <div key={i} className="flex">
-          {row.map((x, j) => (
-            <div key={`${i}-${j}`}
+      {grid && grid.map((row: number[], rowIdx: number) => (
+        <div key={rowIdx} className="flex">
+          {row.map((x, colIdx) => (
+            <div key={`${rowIdx}-${colIdx}`}
               className={classNames("border border-t-0 border-l-0 border-blue-900 text-center text-2xl font-light font-sans cursor-pointer flex flex-col justify-center items-center",
                 {
-                  "border-r-red-900": j === 2 || j === 5,
-                  "border-b-red-900": i === 2 || i === 5,
+                  "border-r-red-900": colIdx === 2 || colIdx === 5,
+                  "border-b-red-900": rowIdx === 2 || rowIdx === 5,
                 },
-                cellClassNames?.(x, [i, j], { selected, selectedIndex })
+                cellClassNames?.(x, [rowIdx, colIdx], { selected, selectedIndex })
               )}
               style={{ width: '60px', height: '60px' }}
-              onClick={() => handleCellClick(x, [i, j])}
+              onClick={() => handleCellClick(x, [rowIdx, colIdx])}
             >
 
-              {x}
+              {render(x, [rowIdx, colIdx])}
             </div>
           ))}
         </div>
