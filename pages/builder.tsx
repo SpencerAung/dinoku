@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { copyGrid, getEmptyGrid } from '../lib/sudoku';
 import SudokuTable from '../components/SudokuTable';
 import classNames from 'classnames'
@@ -25,12 +25,18 @@ function Builder() {
   }
 
   return (
-    <div className="h-full min-h-screen text-slate-50">
-      <button onClick={reset} className="">Reset</button>
-      <div className="flex items-center justify-center">
-        <div className="flex flex-col justify-center items-center  mr-10">
-          <h2 className=" text-2xl">Builder</h2>
-          <p>Clues: {clues}</p>
+    <div className="h-full min-h-screen text-slate-50 flex flex-col justify-center items-center">
+      <h1 className="text-lg">Builder</h1>
+      <div className="flex flex-col justify-center items-end gap-3 ">
+        <div className="flex justify-start gap-2">
+          <div>
+            <p>Clues: {clues}</p>
+          </div>
+          <div>
+            <button onClick={reset} className="bg-white text-black px-2 rounded">Reset</button>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
           <SudokuTable grid={grid} onCellClick={handleOnCellClick}
             cellClassNames={
               (x) => classNames({
@@ -39,11 +45,6 @@ function Builder() {
             }
             cellRender={(x) => x === 1 ? '✅' : ''}
           />
-
-        </div>
-        <div className="flex flex-col items-center">
-          <h2 className="text-2xl">Preview</h2>
-          <br />
           <Preview pattern={previewPattern} />
         </div>
       </div>
