@@ -1,7 +1,9 @@
 import { useRef, useEffect } from 'react';
-import { generate, Solution } from '../lib/sudoku';
-import SudokuTable from '../components/SudokuTable';
 import classNames from 'classnames';
+import { generate, Solution } from '../lib/sudoku';
+
+import SudokuTable from '../components/SudokuTable';
+
 
 
 function Canvas() {
