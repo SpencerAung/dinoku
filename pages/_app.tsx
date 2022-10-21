@@ -25,7 +25,7 @@ function Nav() {
     <nav className={"w-100 py-2 px-4 flex items-center justify-between"}>
       <div className="flex items-end gap-4">
         <Link href="/"><a className="text-xl font-bold">Dinoku</a></Link>
-        <Link href="/builder"><a className="font-semibold">Build</a></Link>
+        <Link href="/build"><a className="font-semibold">Build</a></Link>
       </div>
 
       <div className="flex items-center gap-4">

@@ -1,43 +1,30 @@
-import { useRef, useEffect } from 'react';
+import { useState,useRef } from 'react';
 import classNames from 'classnames';
-import { generate, Solution } from '../lib/sudoku';
+import { applyPattern, generate, getEmptyGrid, Grid } from '../lib/sudoku';
 
 import SudokuTable from '../components/SudokuTable';
 
 
+function Home({ puzzle }: { puzzle: Grid }) {
+  const emptyGridRef = useRef(getEmptyGrid());
+  const patternRef= useRef(emptyGridRef.current);
+  const [grid, setGrid ] = useState(emptyGridRef.current);
 
-function Canvas() {
-  const cvRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = cvRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = 'rgb(200, 0, 0)';
-      ctx.fillRect(10, 10, 50, 50);
-
-      ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-      ctx.fillRect(30, 30, 50, 50);
-    }
-  }, []);
-  return (
-    <canvas ref={cvRef} width={435} height={435} className="border border-slate-500" >
-      sudoku grid
-    </canvas>
-  )
-}
-
-function Home({ sudoku }: { sudoku: Solution }) {
+  const handleOnCellClick= (x: number, [row, col]: number[]) => {
+    const clue = x > 0 ? 0 : 1;
+    patternRef.current[row][col] = clue;
+    setGrid(applyPattern(patternRef.current, puzzle));
+  }
 
   return (
     <div className="flex flex-col justify-center items-center h-full min-h-screen">
       <div style={{ width: '540px' }}>
-        <SudokuTable grid={sudoku.grid}
-          cellClassNames={(x, [row, col], { selected, selectedIndex }) => classNames({
-            "bg-indigo-600": selectedIndex == [row, col],
-            "bg-gray-800": selected === x && selectedIndex != [row, col]
+        <SudokuTable grid={grid}
+          cellClassNames={(x) => classNames({
+            "bg-gray-800": x > 0
 
           })}
+          onCellClick={handleOnCellClick}
         />
       </div>
     </div>
@@ -47,7 +34,7 @@ function Home({ sudoku }: { sudoku: Solution }) {
 export async function getServerSideProps() {
   return {
     props: {
-      sudoku: generate()
+      puzzle: generate().grid
     }
   }
 }
