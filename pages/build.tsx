@@ -36,7 +36,7 @@ function Builder() {
             <button onClick={reset} className="bg-white text-black px-2 rounded">Reset</button>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row items-center gap-4">
           <SudokuTable grid={grid} onCellClick={handleOnCellClick}
             cellClassNames={
               (x) => classNames({
