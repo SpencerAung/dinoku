@@ -18,7 +18,7 @@ function Home({ puzzle }: { puzzle: Grid }) {
 
   return (
     <div className="flex flex-col justify-center items-center h-full min-h-screen">
-      <div style={{ width: '540px' }}>
+      <div>
         <SudokuTable grid={grid}
           cellClassNames={(x) => classNames({
             "bg-gray-800": x > 0

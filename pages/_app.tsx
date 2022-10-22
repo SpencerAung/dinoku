@@ -9,7 +9,7 @@ import Button from '../components/Button';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider session={pageProps.session}>
-      <div className="min-h-screen bg-gray-900 text-slate-50">
+      <div className="max-w-100 overflow-x-hidden  min-h-screen bg-gray-900 text-slate-50">
         <Nav />
         <Component {...pageProps} />
       </div>
